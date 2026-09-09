@@ -121,6 +121,7 @@ export function BuscadorRostros() {
           continue;
         }
         nuevas.push({
+          id: crypto.randomUUID(),
           nombre: file.name,
           preview: canvasAVistaPrevia(lienzo),
           descriptor: descriptores[0]!,
