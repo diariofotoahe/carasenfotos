@@ -7,6 +7,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { FondoGaleria } from "./FondoGaleria";
 import { useProcesador } from "./useProcesador";
@@ -103,7 +104,7 @@ export function BuscadorRostros() {
   }
 
   /** Paso 4: cargar fotografías de referencia y calcular sus descriptores. */
-  async function agregarReferencias(files: FileList | null) {
+  async function agregarReferencias(files: File[] | null) {
     if (!files || files.length === 0) return;
     setError(null);
     setCargandoRef(true);
@@ -112,7 +113,7 @@ export function BuscadorRostros() {
       const nuevas: Referencia[] = [];
       const sinRostro: string[] = [];
 
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const img = await cargarImagen(file);
         const lienzo = redimensionar(img, 720);
         const descriptores = await extraerDescriptores(faceapi, lienzo);
@@ -312,15 +313,15 @@ export function BuscadorRostros() {
               )}
               {referencias.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-3">
-                  {referencias.map((r, i) => (
-                    <figure key={`${r.nombre}-${i}`} className="w-24">
+                  {referencias.map((r) => (
+                    <figure key={r.id} className="w-24">
                       <img
                         src={r.preview}
                         alt={r.nombre}
                         className="h-24 w-24 rounded-xl object-cover shadow-plate"
                       />
                       <button
-                        onClick={() => setReferencias((p) => p.filter((_, j) => j !== i))}
+                        onClick={() => setReferencias((p) => p.filter((x) => x.id !== r.id))}
                         className="mt-1 w-full text-xs text-muted-foreground hover:text-destructive"
                       >
                         Quitar
