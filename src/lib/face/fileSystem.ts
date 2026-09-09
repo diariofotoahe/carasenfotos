@@ -34,7 +34,7 @@ export async function elegirCarpeta(): Promise<FileSystemDirectoryHandle> {
 /** Recorre la carpeta (y subcarpetas) recolectando fotos y videos. */
 export async function explorarCarpeta(
   dir: FileSystemDirectoryHandle,
-  opciones: { recursivo: boolean; excluir?: string },
+  opciones: { recursivo: boolean; excluir?: string | undefined },
   prefijo = "",
 ): Promise<ArchivoFuente[]> {
   const encontrados: ArchivoFuente[] = [];
