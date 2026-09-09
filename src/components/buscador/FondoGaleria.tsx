@@ -27,7 +27,14 @@ const RANURAS = [
 
 export function FondoGaleria({ imagenes }: Props) {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden bg-canvas">
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 overflow-hidden"
+      style={{
+        background:
+          "conic-gradient(from 0deg, oklch(0.12 0 0), oklch(0.2 0 0), oklch(0.3 0 0), oklch(0.2 0 0), oklch(0.12 0 0))",
+      }}
+    >
       <div className="absolute inset-0 bg-dots opacity-70" />
 
       {RANURAS.map((r, i) => {
@@ -58,3 +65,4 @@ export function FondoGaleria({ imagenes }: Props) {
     </div>
   );
 }
+

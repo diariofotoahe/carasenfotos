@@ -198,7 +198,7 @@ export function useProcesador() {
                   momento = t;
                   setGaleria((g) => [preview, ...g].slice(0, 12));
                 }
-                if (op.guardarFotogramas) {
+                if (op.guardarFotogramas && fotogramasGuardados < 2) {
                   // Guardamos el fotograma coincidente como JPG en el destino.
                   const blob = await new Promise<Blob | null>((res) =>
                     lienzo.toBlob((b) => res(b), "image/jpeg", 0.92),
@@ -211,8 +211,8 @@ export function useProcesador() {
                     );
                     fotogramasGuardados += 1;
                   }
-                } else {
-                  break; // Con una coincidencia basta para copiar el video.
+                } else if (!op.guardarFotogramas) {
+                  break; // Con una coincidencia basta para copiar el video sin fotogramas.
                 }
               }
             }
@@ -281,3 +281,4 @@ export function useProcesador() {
     reiniciar,
   };
 }
+
