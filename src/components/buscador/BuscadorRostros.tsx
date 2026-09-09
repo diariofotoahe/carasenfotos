@@ -7,6 +7,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { FondoGaleria } from "./FondoGaleria";
 import { useProcesador } from "./useProcesador";
@@ -26,6 +27,7 @@ import {
 } from "@/lib/face/fileSystem";
 
 interface Referencia {
+  id: string;
   nombre: string;
   preview: string;
   descriptor: Descriptor;
@@ -102,7 +104,7 @@ export function BuscadorRostros() {
   }
 
   /** Paso 4: cargar fotografías de referencia y calcular sus descriptores. */
-  async function agregarReferencias(files: FileList | null) {
+  async function agregarReferencias(files: File[] | null) {
     if (!files || files.length === 0) return;
     setError(null);
     setCargandoRef(true);
@@ -111,7 +113,7 @@ export function BuscadorRostros() {
       const nuevas: Referencia[] = [];
       const sinRostro: string[] = [];
 
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const img = await cargarImagen(file);
         const lienzo = redimensionar(img, 720);
         const descriptores = await extraerDescriptores(faceapi, lienzo);
@@ -120,13 +122,20 @@ export function BuscadorRostros() {
           continue;
         }
         nuevas.push({
+          id: crypto.randomUUID(),
           nombre: file.name,
           preview: canvasAVistaPrevia(lienzo),
           descriptor: descriptores[0]!,
         });
       }
 
+      // Acumular: conservar las referencias anteriores y agregar las nuevas.
       setReferencias((prev) => [...prev, ...nuevas]);
+      if (nuevas.length > 0) {
+        toast.success(
+          `${nuevas.length} foto${nuevas.length === 1 ? "" : "s"} de referencia agregada${nuevas.length === 1 ? "" : "s"}.`,
+        );
+      }
       if (sinRostro.length > 0) {
         setError(`Sin rostro detectable: ${sinRostro.join(", ")}. Usa fotos nítidas y de frente.`);
       }
@@ -290,7 +299,13 @@ export function BuscadorRostros() {
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={(e) => agregarReferencias(e.target.files)}
+                onChange={(e) => {
+                  // Copiar la FileList antes de limpiar el input, para poder
+                  // volver a elegir el mismo archivo y que onChange se dispare.
+                  const seleccion = e.target.files ? Array.from(e.target.files) : [];
+                  e.target.value = "";
+                  void agregarReferencias(seleccion);
+                }}
                 className="mt-4 block w-full text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2.5 file:text-sm file:text-primary-foreground"
               />
               {cargandoRef && (
@@ -298,15 +313,15 @@ export function BuscadorRostros() {
               )}
               {referencias.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-3">
-                  {referencias.map((r, i) => (
-                    <figure key={`${r.nombre}-${i}`} className="w-24">
+                  {referencias.map((r) => (
+                    <figure key={r.id} className="w-24">
                       <img
                         src={r.preview}
                         alt={r.nombre}
                         className="h-24 w-24 rounded-xl object-cover shadow-plate"
                       />
                       <button
-                        onClick={() => setReferencias((p) => p.filter((_, j) => j !== i))}
+                        onClick={() => setReferencias((p) => p.filter((x) => x.id !== r.id))}
                         className="mt-1 w-full text-xs text-muted-foreground hover:text-destructive"
                       >
                         Quitar
