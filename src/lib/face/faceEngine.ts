@@ -33,12 +33,16 @@ export async function loadFaceEngine(
     const faceapi = await import("@vladmandic/face-api");
 
     // Elegimos el backend más rápido disponible (WebGL, con fallback a CPU).
+    const tf = faceapi.tf as unknown as {
+      setBackend: (n: string) => Promise<boolean>;
+      ready: () => Promise<void>;
+    };
     try {
-      await faceapi.tf.setBackend("webgl");
-      await faceapi.tf.ready();
+      await tf.setBackend("webgl");
+      await tf.ready();
     } catch {
-      await faceapi.tf.setBackend("cpu");
-      await faceapi.tf.ready();
+      await tf.setBackend("cpu");
+      await tf.ready();
     }
 
     onProgress?.("Descargando modelos de reconocimiento facial…");

@@ -39,8 +39,10 @@ export async function explorarCarpeta(
 ): Promise<ArchivoFuente[]> {
   const encontrados: ArchivoFuente[] = [];
 
-  // @ts-expect-error values() existe en la implementación del navegador.
-  for await (const entrada of dir.values()) {
+  const iterable = dir as unknown as {
+    values: () => AsyncIterable<FileSystemHandle>;
+  };
+  for await (const entrada of iterable.values()) {
     if (entrada.kind === "directory") {
       if (!opciones.recursivo) continue;
       if (opciones.excluir && entrada.name === opciones.excluir) continue;
