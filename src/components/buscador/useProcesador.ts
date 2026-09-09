@@ -31,8 +31,8 @@ export interface Registro {
   tipo: "imagen" | "video";
   estado: "copiado" | "sin-coincidencia" | "sin-rostro" | "error";
   detalle: string;
-  distancia?: number;
-  vistaPrevia?: string;
+  distancia?: number | undefined;
+  vistaPrevia?: string | undefined;
 }
 
 export interface OpcionesProceso {
