@@ -19,6 +19,12 @@
  */
 
 @theme inline {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --shadow-plate: 0 18px 40px -18px oklch(0.25 0.03 60 / 0.35);
+  --shadow-panel: 0 30px 80px -30px oklch(0.25 0.03 60 / 0.45);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
