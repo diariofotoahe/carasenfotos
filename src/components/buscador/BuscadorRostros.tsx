@@ -128,7 +128,13 @@ export function BuscadorRostros() {
         });
       }
 
+      // Acumular: conservar las referencias anteriores y agregar las nuevas.
       setReferencias((prev) => [...prev, ...nuevas]);
+      if (nuevas.length > 0) {
+        toast.success(
+          `${nuevas.length} foto${nuevas.length === 1 ? "" : "s"} de referencia agregada${nuevas.length === 1 ? "" : "s"}.`,
+        );
+      }
       if (sinRostro.length > 0) {
         setError(`Sin rostro detectable: ${sinRostro.join(", ")}. Usa fotos nítidas y de frente.`);
       }
@@ -292,7 +298,13 @@ export function BuscadorRostros() {
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={(e) => agregarReferencias(e.target.files)}
+                onChange={(e) => {
+                  // Copiar la FileList antes de limpiar el input, para poder
+                  // volver a elegir el mismo archivo y que onChange se dispare.
+                  const seleccion = e.target.files ? Array.from(e.target.files) : [];
+                  e.target.value = "";
+                  void agregarReferencias(seleccion);
+                }}
                 className="mt-4 block w-full text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2.5 file:text-sm file:text-primary-foreground"
               />
               {cargandoRef && (
