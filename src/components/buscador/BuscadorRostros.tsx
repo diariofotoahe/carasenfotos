@@ -26,6 +26,7 @@ import {
 } from "@/lib/face/fileSystem";
 
 interface Referencia {
+  id: string;
   nombre: string;
   preview: string;
   descriptor: Descriptor;
